@@ -22,6 +22,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include <iostream>
+#include <iterator>
 
 #include <cstring>
 
@@ -85,166 +86,10 @@ namespace
 
 		return result;
 	}
-
-	// calculates the next UTF-8 character of the input byte stream
-	// unsafe version -> expects string to be valid
-	utf8::value_t next(utf8::byte_t const * & strm, unsigned & length)
-	{
-		// end of string
-		if (!length)
-			return utf8::END_OF_STRING;
-
-		utf8::value_t result;
-		unsigned charlen;
-
-		// single byte character
-		if (!(strm[0] & 0x80))
-		{
-			charlen = 1;
-			result = strm[0] & 0x7F;
-		}
-		else
-		{
-			utf8::byte_t mask;
-			// determine the byte length of the character
-			if ((strm[0] & 0xE0) == 0xC0)
-				charlen = 2, mask = 0x1F;
-			else if ((strm[0] & 0xF0) == 0xE0)
-				charlen = 3, mask = 0x0F;
-			else if ((strm[0] & 0xF8) == 0xF0)
-				charlen = 4, mask = 0x07;
-
-			// calculate the unicode index
-			result = strm[0] & mask;
-			for (unsigned byte = 1; byte < charlen; ++byte)
-			{
-				utf8::byte_t cb = strm[byte];
-				result = (result << 6) | (cb & 0x3F);
-			}
-		}
-		// increment ptr and decrement len
-		strm += charlen;
-		length -= charlen;
-
-		return result;
-	}
-
-	utf8::value_t fast_foward(utf8::byte_t const * & strm, unsigned & length, unsigned offset)
-	{
-		if (!offset)
-			return utf8::INVALID_CHARACTER;
-
-		for (unsigned n = 1; n < offset; ++n)
-		{
-			if (strm[0] & 0x80)
-				++strm, --length;
-			else if ((strm[0] & 0xE0) == 0xC0)
-				strm += 2, length -= 2;
-			else if ((strm[0] & 0xF0) == 0xE0)
-				strm += 3, length -= 3;
-			else if ((strm[0] & 0xF8) == 0xF0)
-				strm += 4, length -= 4;
-			else if (strm[0] == 0)
-				return utf8::END_OF_STRING;
-		}
-		return next(strm, length);
-	}
 }
 
 namespace utf8
 {
-	namespace detail
-	{
-		iterator::iterator()
-			: strm_(nullptr)
-			, length_(0)
-			, value_(INVALID_CHARACTER)
-		{
-		}
-
-		iterator::~iterator()
-		{
-		}
-
-		iterator::iterator(byte_t const * strm, unsigned length)
-			: strm_(strm)
-			, length_(length)
-			, value_(next(strm, length))
-		{
-			if (value_ == END_OF_STRING)
-				strm_ = nullptr;
-		}
-
-		iterator::iterator(iterator const & src)
-			: strm_(src.strm_)
-			, length_(src.length_)
-			, value_(src.value_)
-		{
-		}
-
-		iterator & iterator::operator = (iterator const & src)
-		{
-			strm_ = src.strm_;
-			length_ = src.length_;
-			value_ = src.value_;
-			return *this;
-		}
-
-		bool iterator::operator == (iterator const & rhs) const
-		{
-			// it should be sufficient to check if the byte streams are equal
-			return (strm_ == rhs.strm_);
-		}
-
-		bool iterator::operator != (iterator const & rhs) const
-		{
-			return (strm_ != rhs.strm_);
-		}
-
-		iterator iterator::operator ++ (int)
-		{
-			iterator tmp(*this);
-			value_ = next(strm_, length_);
-
-			if (value_ == END_OF_STRING)
-				strm_ = nullptr;
-
-			return tmp;
-		}
-
-		iterator & iterator::operator++()
-		{
-			value_ = next(strm_, length_);
-
-			if (value_ == END_OF_STRING)
-				strm_ = nullptr;
-
-			return *this;
-		}
-
-		value_t const & iterator::operator * () const
-		{
-			return value_;
-		}
-        
-        iterator iterator::operator + (unsigned offset)
-		{
-			return (iterator(*this) += offset);
-		}
-
-		iterator & iterator::operator += (unsigned offset)
-		{
-			value_t tmp = fast_foward(strm_, length_, offset);
-			if (tmp != INVALID_CHARACTER)
-				value_ = tmp;
-
-			if (value_ == END_OF_STRING)
-				strm_ = nullptr;
-
-			return *this;
-		}
-	}
-
 	string::string(char const * str /* = nullptr */)
 		: length_(0)
 	{
@@ -270,6 +115,23 @@ namespace utf8
 			std::memcpy(&(data_[0]), str, bufflen);
 		}
 	}
+    
+    string::string(std::string const & src)
+        : length_(0)
+        , data_(std::begin(src), std::end(src))
+    {
+        unsigned bufflen = static_cast<unsigned>(data_.size());
+        value_t val = ::next_s(&(data_[0]), bufflen);
+        while ((val != INVALID_CHARACTER) && (val != END_OF_STRING))
+        {
+            ++length_;
+            val = ::next_s();
+        }
+
+        // error handling
+        if (val == INVALID_CHARACTER)
+            throw std::invalid_argument("String contains non UTF-8 bytes.");
+    }
 
 	string::~string()
 	{
@@ -322,9 +184,32 @@ namespace utf8
 	{
 		return const_iterator();
 	}
+    
+    string string::operator + (string const & other) const
+    {
+        string cpy(*this);
+        cpy += other;
+        return (string(*this) += other);
+    }
+    
+    string & string::operator += (string const & other)
+    {
+        unsigned oldsize = static_cast<unsigned>(data_.size());
+        data_.resize(data_.size() + other.data_.size());
+        std::memcpy(&(data_[oldsize]), &(other.data_[0]), other.data_.size());
+        return *this;
+    }
 }
 
 std::ostream & operator << (std::ostream & os, utf8::string const & str)
 {
 	return os.write(reinterpret_cast<char const *>(&((str.data())[0])), str.data().size());
+}
+
+std::istream & operator >> (std::istream & is, utf8::string & str)
+{
+    std::string tmp;
+    is >> tmp;
+    str = utf8::string(tmp);
+    return is;
 }

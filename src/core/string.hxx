@@ -22,60 +22,15 @@
 #ifndef UTF8PP_CORE_STRING_HXX
 #define UTF8PP_CORE_STRING_HXX
 
+#include "types.hxx"
+#include "iterator.hxx"
+
 #include <vector>
 #include <iosfwd>
+#include <string>
 
 namespace utf8
 {
-	// value_t represents an index in the unicode table
-	typedef unsigned int value_t;
-	// byte_t represents a single byte
-	typedef unsigned char byte_t;
-
-	// The end of string character
-	static value_t const END_OF_STRING = 0;
-	// An invalid character
-	static value_t const INVALID_CHARACTER = -1;
-
-	class string;
-
-	namespace detail
-	{
-		class iterator
-		{
-		public:
-			iterator();
-			~iterator();
-
-			iterator(iterator const & src);
-			iterator & operator = (iterator const & src);
-
-			bool operator == (iterator const & rhs) const;
-			bool operator != (iterator const & rhs) const;
-
-			iterator operator ++ (int);
-			iterator & operator ++ ();
-
-			iterator operator + (unsigned offset);
-			iterator & operator += (unsigned offset);
-
-			value_t const & operator * () const; 
-
-		private:
-			iterator(byte_t const * strm, unsigned length);
-
-			// same data as used by internal next and next_s
-			byte_t const * strm_;
-			unsigned length_;
-
-			// the current value
-			value_t value_;
-
-			// string class needs access to the constructor
-			friend class string;
-		};
-	}
-
 	// NOTE: utf-8 string's do not contain a NULL byte while the
 	// byte stream used to initialize the string might contain one
 	class string
@@ -89,6 +44,8 @@ namespace utf8
 		string(string const & src);
 		string(string && src);
 		string & operator = (string const & src);
+        
+        explicit string(std::string const & src);
 
 		// get the length of the string in characters
 		unsigned length() const;
@@ -100,6 +57,10 @@ namespace utf8
 		typedef detail::iterator const_iterator;
 		const_iterator begin() const;
 		const_iterator end() const;
+        
+        // concatenation
+        string operator + (string const & other) const;
+        string & operator += (string const & other);
 
 	private:
 		// The byte data of the string
@@ -111,5 +72,7 @@ namespace utf8
 
 // used to write UTF-8 text to an output stream
 std::ostream & operator << (std::ostream & os, utf8::string const & str);
+// should act just like std::string but with UTF-8 :-)
+std::istream & operator >> (std::istream & is, utf8::string & str);
 
 #endif // UTF8PP_CORE_STRING_HXX
