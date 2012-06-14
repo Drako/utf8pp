@@ -25,31 +25,8 @@
 
 #include <cstring>
 
-#ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
-#else
-#include <clocale>
-#endif
-
 namespace
 {
-	void prepare_console()
-	{
-		static bool prepared = false;
-		if (!prepared)
-		{
-#ifdef _WIN32
-			// sets the Win32 console codepage to UTF-8
-			// to print the characters properly the Lucida Console font is required
-			SetConsoleOutputCP(CP_UTF8);
-#else
-			// this is here to ensure an UTF-8 locale is used under Unix/Linux
-			std::setlocale(LC_ALL, "en_US.UTF-8");
-#endif
-		}
-	}
-
 	// calculates the next UTF-8 character of the input byte stream
 	// safe version -> checks for invalid characters
 	utf8::value_t next_s(utf8::byte_t const * strm = nullptr, unsigned length = -1)
@@ -233,8 +210,6 @@ namespace utf8
 	string::string(char const * str /* = nullptr */)
 		: length_(0)
 	{
-		prepare_console();
-		
 		if (str)
 		{
 			// calculate buffer size
