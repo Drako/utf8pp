@@ -56,6 +56,9 @@ namespace utf8
 			iterator operator ++ (int);
 			iterator & operator ++ ();
 
+			iterator operator + (unsigned offset);
+			iterator & operator += (unsigned offset);
+
 			value_t const & operator * () const; 
 
 		private:

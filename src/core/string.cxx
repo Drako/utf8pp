@@ -128,6 +128,27 @@ namespace
 
 		return result;
 	}
+
+	utf8::value_t fast_foward(utf8::byte_t const * & strm, unsigned & length, unsigned offset)
+	{
+		if (!offset)
+			return utf8::INVALID_CHARACTER;
+
+		for (unsigned n = 1; n < offset; ++n)
+		{
+			if (strm[0] & 0x80)
+				++strm, --length;
+			else if ((strm[0] & 0xE0) == 0xC0)
+				strm += 2, length -= 2;
+			else if ((strm[0] & 0xF0) == 0xE0)
+				strm += 3, length -= 3;
+			else if ((strm[0] & 0xF8) == 0xF0)
+				strm += 4, length -= 4;
+			else if (strm[0] == 0)
+				return utf8::END_OF_STRING;
+		}
+		return next(strm, length);
+	}
 }
 
 namespace utf8
@@ -204,6 +225,23 @@ namespace utf8
 		value_t const & iterator::operator * () const
 		{
 			return value_;
+		}
+        
+        iterator iterator::operator + (unsigned offset)
+		{
+			return (iterator(*this) += offset);
+		}
+
+		iterator & iterator::operator += (unsigned offset)
+		{
+			value_t tmp = fast_foward(strm_, length_, offset);
+			if (tmp != INVALID_CHARACTER)
+				value_ = tmp;
+
+			if (value_ == END_OF_STRING)
+				strm_ = nullptr;
+
+			return *this;
 		}
 	}
 
@@ -288,5 +326,5 @@ namespace utf8
 
 std::ostream & operator << (std::ostream & os, utf8::string const & str)
 {
-	return os.write(reinterpret_cast<char const *>(&((str.data())[0])), str.length());
+	return os.write(reinterpret_cast<char const *>(&((str.data())[0])), str.data().size());
 }
