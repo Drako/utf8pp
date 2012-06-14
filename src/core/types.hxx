@@ -24,15 +24,15 @@
 
 namespace utf8
 {
-	// value_t represents an index in the unicode table
-	typedef unsigned int value_t;
-	// byte_t represents a single byte
-	typedef unsigned char byte_t;
+    // value_t represents an index in the unicode table
+    typedef unsigned int value_t;
+    // byte_t represents a single byte
+    typedef unsigned char byte_t;
 
-	// The end of string character
-	static value_t const END_OF_STRING = 0;
-	// An invalid character
-	static value_t const INVALID_CHARACTER = -1;
+    // The end of string character
+    static value_t const END_OF_STRING = 0;
+    // An invalid character
+    static value_t const INVALID_CHARACTER = -1;
 }
 
 #endif // UTF8PP_CORE_TYPES_HXX

@@ -31,32 +31,32 @@
 
 namespace utf8
 {
-	// NOTE: utf-8 string's do not contain a NULL byte while the
-	// byte stream used to initialize the string might contain one
-	class string
-	{
-	public:
-		// This constructor will throw an std::invalid_argument exception
-		// if the input string contains invalid bytes.
-		string(char const * str = nullptr);
-		~string();
+    // NOTE: utf-8 string's do not contain a NULL byte while the
+    // byte stream used to initialize the string might contain one
+    class string
+    {
+    public:
+        // This constructor will throw an std::invalid_argument exception
+        // if the input string contains invalid bytes.
+        string(char const * str = nullptr);
+        ~string();
 
-		string(string const & src);
-		string(string && src);
-		string & operator = (string const & src);
+        string(string const & src);
+        string(string && src);
+        string & operator = (string const & src);
         
         explicit string(std::string const & src);
 
-		// get the length of the string in characters
-		unsigned length() const;
-		// access the data directly
-		std::vector<byte_t> const & data() const;
-		std::vector<byte_t> & data();
+        // get the length of the string in characters
+        unsigned length() const;
+        // access the data directly
+        std::vector<byte_t> const & data() const;
+        std::vector<byte_t> & data();
 
-		// iterators
-		typedef detail::iterator const_iterator;
-		const_iterator begin() const;
-		const_iterator end() const;
+        // iterators
+        typedef detail::iterator const_iterator;
+        const_iterator begin() const;
+        const_iterator end() const;
         
         // index operator
         value_t operator [] (unsigned index) const;
@@ -65,12 +65,12 @@ namespace utf8
         string operator + (string const & other) const;
         string & operator += (string const & other);
 
-	private:
-		// The byte data of the string
-		std::vector<byte_t> data_;
-		// The length of the string in characters
-		unsigned length_;
-	};
+    private:
+        // The byte data of the string
+        std::vector<byte_t> data_;
+        // The length of the string in characters
+        unsigned length_;
+    };
     
     // uses std::getline and std::string in the background
     std::istream & getline(std::istream & is, string & str, char delim = '\n');

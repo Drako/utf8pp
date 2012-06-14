@@ -28,42 +28,42 @@ namespace utf8
 {
     class string;
 
-	namespace detail
-	{
-		class iterator
-		{
-		public:
-			iterator();
-			~iterator();
+    namespace detail
+    {
+        class iterator
+        {
+        public:
+            iterator();
+            ~iterator();
 
-			iterator(iterator const & src);
-			iterator & operator = (iterator const & src);
+            iterator(iterator const & src);
+            iterator & operator = (iterator const & src);
 
-			bool operator == (iterator const & rhs) const;
-			bool operator != (iterator const & rhs) const;
+            bool operator == (iterator const & rhs) const;
+            bool operator != (iterator const & rhs) const;
 
-			iterator operator ++ (int);
-			iterator & operator ++ ();
+            iterator operator ++ (int);
+            iterator & operator ++ ();
 
-			iterator operator + (unsigned offset) const;
-			iterator & operator += (unsigned offset);
+            iterator operator + (unsigned offset) const;
+            iterator & operator += (unsigned offset);
 
-			value_t const & operator * () const; 
+            value_t const & operator * () const; 
 
-		private:
-			iterator(byte_t const * strm, unsigned length);
+        private:
+            iterator(byte_t const * strm, unsigned length);
 
-			// same data as used by internal next and next_s
-			byte_t const * strm_;
-			unsigned length_;
+            // same data as used by internal next and next_s
+            byte_t const * strm_;
+            unsigned length_;
 
-			// the current value
-			value_t value_;
+            // the current value
+            value_t value_;
 
-			// string class needs access to the constructor
-			friend class ::utf8::string;
-		};
-	}
+            // string class needs access to the constructor
+            friend class ::utf8::string;
+        };
+    }
 }
 
 #endif // UTF8PP_CORE_ITERATOR_HXX
