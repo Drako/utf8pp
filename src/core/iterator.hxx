@@ -1,7 +1,7 @@
 #pragma once
 
 /*
-    Copyright (C) 2012, Felix Bytow <drako123@gmx.de>
+    Copyright (C) 2012, Felix Bytow <felix.bytow@googlemail.com>
 
     This file is part of utf8pp.
 
