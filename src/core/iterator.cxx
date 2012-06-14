@@ -1,4 +1,4 @@
-/*
+﻿/*
     Copyright (C) 2012, Felix Bytow <drako123@gmx.de>
 
     This file is part of utf8pp.
@@ -70,18 +70,20 @@ namespace
 		if (!offset)
 			return utf8::INVALID_CHARACTER;
 
-		for (unsigned n = 1; n < offset; ++n)
+		for (unsigned n = 0; n < offset; ++n)
 		{
-			if (strm[0] & 0x80)
-				++strm, --length;
+            unsigned step = 0;
+			if (!(strm[0] & 0x80))
+				step = 1;
 			else if ((strm[0] & 0xE0) == 0xC0)
-				strm += 2, length -= 2;
+				step = 2;
 			else if ((strm[0] & 0xF0) == 0xE0)
-				strm += 3, length -= 3;
+				step = 3;
 			else if ((strm[0] & 0xF8) == 0xF0)
-				strm += 4, length -= 4;
+				step = 4;
 			else if (strm[0] == 0)
 				return utf8::END_OF_STRING;
+            strm += step; length -= step;
 		}
 		return next(strm, length);
 	}
@@ -165,7 +167,9 @@ namespace utf8
         
         iterator iterator::operator + (unsigned offset) const
 		{
-			return (iterator(*this) += offset);
+            iterator tmp(*this);
+            tmp += offset;
+			return tmp;
 		}
 
 		iterator & iterator::operator += (unsigned offset)

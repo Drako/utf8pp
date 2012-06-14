@@ -58,6 +58,9 @@ namespace utf8
 		const_iterator begin() const;
 		const_iterator end() const;
         
+        // index operator
+        value_t operator [] (unsigned index) const;
+        
         // concatenation
         string operator + (string const & other) const;
         string & operator += (string const & other);
@@ -68,6 +71,9 @@ namespace utf8
 		// The length of the string in characters
 		unsigned length_;
 	};
+    
+    // uses std::getline and std::string in the background
+    std::istream & getline(std::istream & is, string & str, char delim = '\n');
 }
 
 // used to write UTF-8 text to an output stream

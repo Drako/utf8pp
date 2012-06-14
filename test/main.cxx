@@ -1,4 +1,4 @@
-/*
+﻿/*
     Copyright (C) 2012, Felix Bytow <drako123@gmx.de>
 
     This file is part of utf8pp.
@@ -18,13 +18,25 @@
 */
 
 #include "core/string.hxx"
-using utf8::string;
 
 #include <iostream>
+#include <iomanip>
+#include <algorithm>
 
 int main()
 {
-    string hello(u8"привет");
-    std::cout << hello << "\n";
+    utf8::string name;
+    std::cout << "Hello, what is your name? ";
+    utf8::getline(std::cin, name);
+    std::cout << "So your name is " << name << "\n";
+    
+    // thats for the number formatting...
+    std::cout << std::hex << std::uppercase;
+    
+    std::cout << "It looks like this in UNICODE: { U+" << std::setfill('0') << std::setw(4) << name[0];
+    std::for_each(name.begin() + 1, name.end(), [](utf8::value_t val){
+        std::cout << ", U+" << std::setfill('0') << std::setw(4) << val;
+    });
+    std::cout << " }" << std::endl;
     return 0;
 }

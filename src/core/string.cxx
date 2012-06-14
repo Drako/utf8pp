@@ -1,4 +1,4 @@
-/*
+﻿/*
     Copyright (C) 2012, Felix Bytow <drako123@gmx.de>
 
     This file is part of utf8pp.
@@ -177,19 +177,26 @@ namespace utf8
 
 	string::const_iterator string::begin() const
 	{
-		return const_iterator(&(data_[0]), length_);
+		return const_iterator(&(data_[0]), static_cast<unsigned>(data_.size()));
 	}
 
 	string::const_iterator string::end() const
 	{
 		return const_iterator();
 	}
+	
+	value_t string::operator [] (unsigned index) const
+	{
+        if (index > length_)
+            throw std::range_error("Index is too big.");
+        return *(begin() + index);
+    }
     
     string string::operator + (string const & other) const
     {
         string cpy(*this);
         cpy += other;
-        return (string(*this) += other);
+        return cpy;
     }
     
     string & string::operator += (string const & other)
@@ -198,6 +205,14 @@ namespace utf8
         data_.resize(data_.size() + other.data_.size());
         std::memcpy(&(data_[oldsize]), &(other.data_[0]), other.data_.size());
         return *this;
+    }
+    
+    std::istream & getline(std::istream & is, string & str, char delim /* = '\n' */)
+    {
+        std::string tmp;
+        std::getline(is, tmp, delim);
+        str = utf8::string(tmp);
+        return is;
     }
 }
 
