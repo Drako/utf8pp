@@ -100,9 +100,9 @@ namespace utf8
         {
         }
 
-        iterator::~iterator()
-        {
-        }
+        iterator::~iterator() = default;
+        iterator::iterator(iterator const & src) = default;
+        iterator & iterator::operator = (iterator const & src) = default;
 
         iterator::iterator(byte_t const * strm, unsigned length)
             : strm_(strm)
@@ -111,21 +111,6 @@ namespace utf8
         {
             if (value_ == END_OF_STRING)
                 strm_ = nullptr;
-        }
-
-        iterator::iterator(iterator const & src)
-            : strm_(src.strm_)
-            , length_(src.length_)
-            , value_(src.value_)
-        {
-        }
-
-        iterator & iterator::operator = (iterator const & src)
-        {
-            strm_ = src.strm_;
-            length_ = src.length_;
-            value_ = src.value_;
-            return *this;
         }
 
         bool iterator::operator == (iterator const & rhs) const
@@ -164,7 +149,7 @@ namespace utf8
         {
             return value_;
         }
-        
+
         iterator iterator::operator + (unsigned offset) const
         {
             iterator tmp(*this);

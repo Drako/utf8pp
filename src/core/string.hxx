@@ -44,7 +44,7 @@ namespace utf8
         string(string const & src);
         string(string && src);
         string & operator = (string const & src);
-        
+
         explicit string(std::string const & src);
 
         // get the length of the string in characters
@@ -57,10 +57,10 @@ namespace utf8
         typedef detail::iterator const_iterator;
         const_iterator begin() const;
         const_iterator end() const;
-        
+
         // index operator
         value_t operator [] (unsigned index) const;
-        
+
         // concatenation
         string operator + (string const & other) const;
         string & operator += (string const & other);
@@ -71,7 +71,7 @@ namespace utf8
         // The length of the string in characters
         unsigned length_;
     };
-    
+
     // uses std::getline and std::string in the background
     std::istream & getline(std::istream & is, string & str, char delim = '\n');
 }

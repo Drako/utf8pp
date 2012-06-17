@@ -48,7 +48,7 @@ namespace utf8
             iterator operator + (unsigned offset) const;
             iterator & operator += (unsigned offset);
 
-            value_t const & operator * () const; 
+            value_t const & operator * () const;
 
         private:
             iterator(byte_t const * strm, unsigned length);

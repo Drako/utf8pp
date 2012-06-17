@@ -115,7 +115,11 @@ namespace utf8
             std::memcpy(&(data_[0]), str, bufflen);
         }
     }
-    
+
+    string::~string() = default;
+    string::string (string const & src) = default;
+    string & string::operator = (string const & src) = default;
+
     string::string(std::string const & src)
         : length_(0)
         , data_(std::begin(src), std::end(src))
@@ -133,18 +137,6 @@ namespace utf8
             throw std::invalid_argument("String contains non UTF-8 bytes.");
     }
 
-    string::~string()
-    {
-        // default destructor
-    }
-
-    // copy constructot
-    string::string(string const & src)
-        : length_(src.length_)
-        , data_(src.data_)
-    {
-    }
-
     // move constructor
     string::string(string && src)
         : length_(src.length_)
@@ -155,14 +147,6 @@ namespace utf8
     unsigned string::length() const
     {
         return length_;
-    }
-
-    // assignment operator
-    string & string::operator = (string const & src)
-    {
-        data_ = src.data_;
-        length_ = src.length_;
-        return *this;
     }
 
     std::vector<byte_t> const & string::data() const
@@ -184,21 +168,21 @@ namespace utf8
     {
         return const_iterator();
     }
-    
+
     value_t string::operator [] (unsigned index) const
     {
         if (index > length_)
             throw std::range_error("Index is too big.");
         return *(begin() + index);
     }
-    
+
     string string::operator + (string const & other) const
     {
         string cpy(*this);
         cpy += other;
         return cpy;
     }
-    
+
     string & string::operator += (string const & other)
     {
         unsigned oldsize = static_cast<unsigned>(data_.size());
@@ -206,7 +190,7 @@ namespace utf8
         std::memcpy(&(data_[oldsize]), &(other.data_[0]), other.data_.size());
         return *this;
     }
-    
+
     std::istream & getline(std::istream & is, string & str, char delim /* = '\n' */)
     {
         std::string tmp;
