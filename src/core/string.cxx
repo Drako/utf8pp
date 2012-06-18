@@ -25,6 +25,7 @@
 #include <iterator>
 
 #include <cstring>
+#include <cmath>
 
 namespace
 {
@@ -189,6 +190,46 @@ namespace utf8
         data_.resize(data_.size() + other.data_.size());
         std::memcpy(&(data_[oldsize]), &(other.data_[0]), other.data_.size());
         return *this;
+    }
+    
+    void string::push_back(value_t c)
+    {
+        unsigned numbits = static_cast<unsigned>(std::ceil(std::log2(c)));
+        if (numbits > 21)
+            throw std::invalid_argument("c is not a valid Unicode character.");
+        
+        unsigned numbytes = 0; // number of UTF-8 Bytes
+        if (numbits <= 7)
+            numbytes = 1;
+        else if (numbits > 7 && numbits <= 11)
+            numbytes = 2;
+        else if (numbits > 11 && numbits <= 16)
+            numbytes = 3;
+        else
+            numbytes = 4;
+        
+        if (!numbytes) // no null-bytes in utf8::string
+            return;
+        
+        std::vector<byte_t> character(numbytes);
+        
+        for (unsigned byte = numbytes - 1; byte >= 1; --byte)
+        {
+            character[byte] = 0x80 | (c & 0x3F);
+            c >>= 6;
+        }
+        
+        switch (numbytes)
+        {
+            case 1: character[0] = c & 0x7F; break;
+            case 2: character[0] = 0xC0 | (c & 0x1F); break;
+            case 3: character[0] = 0xE0 | (c & 0x0F); break;
+            case 4: character[0] = 0xF0 | (c & 0x07); break;
+        }
+        
+        // append the new character
+        data_.insert(data_.end(), character.begin(), character.end());
+        ++length_;
     }
 
     std::istream & getline(std::istream & is, string & str, char delim /* = '\n' */)

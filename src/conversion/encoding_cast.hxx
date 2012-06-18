@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 /*
     Copyright (C) 2012, Felix Bytow <felix.bytow@googlemail.com>
@@ -22,7 +22,11 @@
 #ifndef UTF8PP_CONVERSION_ENCODINGCAST_HXX
 #define UTF8PP_CONVERSION_ENCODINGCAST_HXX
 
+#ifdef UTF8PP_TEST
+#include "../core/string.hxx"
+#else
 #include "string.hxx"
+#endif
 
 #include <typeinfo>
 

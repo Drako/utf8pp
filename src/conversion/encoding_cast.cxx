@@ -1,4 +1,4 @@
-/*
+﻿/*
     Copyright (C) 2012, Felix Bytow <felix.bytow@googlemail.com>
 
     This file is part of utf8pp.
@@ -18,6 +18,8 @@
 */
 
 #include "encoding_cast.hxx"
+
+#include <iostream>
 
 namespace utf8
 {
@@ -44,8 +46,12 @@ namespace utf8
 
                 static utf8::string from_wstring(std::wstring const & src)
                 {
-                    // TODO: implement UTF-32 to UTF-8 conversion
-                    return utf8::string();
+                    utf8::string result;
+                    for (auto const & c : src)
+                    {
+                        result.push_back(c);
+                    }
+                    return result;
                 }
             };
 

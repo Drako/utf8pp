@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 /*
     Copyright (C) 2012, Felix Bytow <felix.bytow@googlemail.com>
@@ -64,6 +64,10 @@ namespace utf8
         // concatenation
         string operator + (string const & other) const;
         string & operator += (string const & other);
+        
+        // append single characters (might be slow and shouldn't be used too often in perfomance critical code)
+        // this method is used in conversions from std::wstring to utf8::string
+        void push_back(value_t c);
 
     private:
         // The byte data of the string

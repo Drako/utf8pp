@@ -17,26 +17,24 @@
     along with utf8pp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#define UTF8PP_TEST
+
 #include "core/string.hxx"
+#include "conversion/encoding_cast.hxx"
+using utf8::encoding_cast;
 
 #include <iostream>
-#include <iomanip>
-#include <algorithm>
+#include <string>
 
 int main()
 {
-    utf8::string name;
-    std::cout << "Hello, what is your name? ";
-    utf8::getline(std::cin, name);
-    std::cout << "So your name is " << name << "\n";
+    //wchar_t euro[] = { 0x20AC, L' ', L'=', L' ', L'e', L'u', L'r', L'o', 0 };
+    wchar_t euro[] = L"\u20AC = euro";
+    std::wstring eurow(euro);
     
-    // thats for the number formatting...
-    std::cout << std::hex << std::uppercase;
+    auto eurou = encoding_cast<utf8::string>(eurow);
     
-    std::cout << "It looks like this in UNICODE: { U+" << std::setfill('0') << std::setw(4) << name[0];
-    std::for_each(name.begin() + 1, name.end(), [](utf8::value_t val){
-        std::cout << ", U+" << std::setfill('0') << std::setw(4) << val;
-    });
-    std::cout << " }" << std::endl;
+    std::cout << eurou << "\n";
+    
     return 0;
 }
