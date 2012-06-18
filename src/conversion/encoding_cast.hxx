@@ -79,6 +79,15 @@ namespace utf8
                 return platform::wstring2utf8(src);
             }
         };
+        
+        template <>
+        struct encoding_cast<std::wstring, utf8::string>
+        {
+            static std::wstring convert(utf8::string const & src)
+            {
+                return platform::utf82wstring(src);
+            }
+        };
     }
 
     template <typename TargetType, typename SourceType>
@@ -88,5 +97,4 @@ namespace utf8
     }
 }
 
-#endif // UTF8PP_CORE_TYPES_HXX
-
+#endif // UTF8PP_CONVERSION_ENCODINGCAST_HXX
