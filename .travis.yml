@@ -1,8 +1,26 @@
 language: cpp
 
+before_install:
+    - wget http://www.cmake.org/files/v2.8/cmake-2.8.10.tar.gz
+    - tar xzf cmake-2.8.10.tar.gz
+    - cd cmake-2.8.10
+    - ./configure
+    - make
+
+install:
+    - sudo make install
+
+before_script:
+    - which cmake
+    - cmake --version
+    - cd ..
+
 compiler:
     - clang
     - gcc
 
-script: mkdir -p build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && make
-
+script:
+    - mkdir -p build
+    - cd build
+    - cmake -DCMAKE_BUILD_TYPE=Release ..
+    - make
