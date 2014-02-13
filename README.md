@@ -7,3 +7,9 @@ Currently the library should compile with g++-4.7 and clang++ 3.0.
 Newer versions of these compilers should also work.
 
 Requires CMake 2.8.10 or higher to build.
+
+Travis Status
+-------------
+
+Drako/utf8pp.png?branch=master)](https://travis-ci.org/Drako/utf8pp)
+
