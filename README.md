@@ -11,5 +11,5 @@ Requires CMake 2.8.10 or higher to build.
 Travis Status
 -------------
 
-Drako/utf8pp.png?branch=master)](https://travis-ci.org/Drako/utf8pp)
+[![Build Status](Drako/utf8pp.svg?branch=master)](https://travis-ci.org/Drako/utf8pp)
 
