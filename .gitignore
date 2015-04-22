@@ -14,3 +14,7 @@
 # cmake build directory
 build/
 
+# bii stuff
+bin/
+bii/
+

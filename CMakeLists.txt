@@ -1,6 +1,12 @@
 PROJECT (utf8pp)
 CMAKE_MINIMUM_REQUIRED (VERSION 2.8.10)
 
+IF (BIICODE)
+    INCLUDE ("${CMAKE_HOME_DIRECTORY}/biicode.cmake")
+    INCLUDE ("biicode.cmake")
+    RETURN ()
+ENDIF ()
+
 # for g++ and clang++
 IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     IF (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.7.0")
