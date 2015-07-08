@@ -187,7 +187,8 @@ namespace utf8
     string & string::operator += (string const & other)
     {
         unsigned oldsize = static_cast<unsigned>(data_.size());
-        data_.resize(data_.size() + other.data_.size());
+        length_ = data_.size() + other.data_.size();
+        data_.resize(length_);
         std::memcpy(&(data_[oldsize]), &(other.data_[0]), other.data_.size());
         return *this;
     }
