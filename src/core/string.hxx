@@ -28,6 +28,7 @@
 #include <vector>
 #include <iosfwd>
 #include <string>
+#include <cstddef>
 
 namespace utf8
 {
@@ -48,10 +49,12 @@ namespace utf8
         explicit string(std::string const & src);
 
         // get the length of the string in characters
-        unsigned length() const;
+        std::size_t length() const;
         // access the data directly
         std::vector<byte_t> const & data() const;
         std::vector<byte_t> & data();
+        // shortcut for data().size()
+        std::size_t size() const;
 
         // iterators
         typedef detail::iterator const_iterator;
@@ -73,7 +76,7 @@ namespace utf8
         // The byte data of the string
         std::vector<byte_t> data_;
         // The length of the string in characters
-        unsigned length_;
+        std::size_t length_;
     };
 
     // uses std::getline and std::string in the background

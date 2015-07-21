@@ -1,20 +1,20 @@
-# Compiled Object files
-*.slo
-*.lo
-*.o
-
-# Compiled Dynamic libraries
-*.so
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-
 # cmake build directory
-build/
+build*/
 
 # bii stuff
 bin/
 bii/
+
+# kdevelop
+*.kdev4
+.kdev4/
+
+# sublime
+*.sublime-*
+
+# qtcreator
+CMakeLists.txt.user
+
+# clion
+.idea/
 

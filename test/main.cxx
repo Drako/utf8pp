@@ -28,6 +28,14 @@ using utf8::encoding_cast;
 
 int main()
 {
+    utf8::string a(u8"(╯°□°）╯︵ ┻━┻");
+    utf8::string b(u8"(-■_■)");
+    utf8::string ab = a + b;
+    std::cout << a.length() << " + " << b.length() << " = " << ab.length() << "\n";
+    std::cout << a.size() << " + " << b.size() << " = " << ab.size() << "\n";
+    
+    std::cout << ab << "\n";
+    
     //wchar_t euro[] = { 0x20AC, L' ', L'=', L' ', L'e', L'u', L'r', L'o', 0 };
     wchar_t euro[] = L"\u20AC = euro";
     std::wstring eurow(euro);

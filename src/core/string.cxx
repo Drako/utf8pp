@@ -145,7 +145,7 @@ namespace utf8
         data_.swap(src.data_);
     }
 
-    unsigned string::length() const
+    std::size_t string::length() const
     {
         return length_;
     }
@@ -158,6 +158,11 @@ namespace utf8
     std::vector<byte_t> & string::data()
     {
         return data_;
+    }
+    
+    std::size_t string::size() const
+    {
+        return data_.size();
     }
 
     string::const_iterator string::begin() const
@@ -187,8 +192,8 @@ namespace utf8
     string & string::operator += (string const & other)
     {
         unsigned oldsize = static_cast<unsigned>(data_.size());
-        length_ = data_.size() + other.data_.size();
-        data_.resize(length_);
+        length_ += other.length_;
+        data_.resize(data_.size() + other.data_.size());
         std::memcpy(&(data_[oldsize]), &(other.data_[0]), other.data_.size());
         return *this;
     }
